@@ -1,6 +1,9 @@
+import loginRoutes from './loginRoutes';
 
 const routes = (app) => {
-    app.use();
+    app.use(
+        loginRoutes
+    );
 }
 
 module.exports = routes;
