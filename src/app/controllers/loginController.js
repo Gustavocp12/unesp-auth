@@ -1,12 +1,15 @@
 const loginModel = require('../models/loginModel');
+const emailConfiguration = require('../utils/emailConfiguration');
 const jwt = require('jsonwebtoken');
 const config = require('../../../config');
+const speakeasy = require('speakeasy');
 
 const createLogin = async (req, res) => {
 
     try{
         const { name, email, password, role } = req.body;
-        const result = await loginModel.createLogin(name, email, password, role);
+        const secret = await emailConfiguration.sendOtpEmail(email);
+        const result = await loginModel.createLogin(name, email, password, role, secret);
 
         return res.status(201).json({ message: 'Login criado com sucesso!', result });
     }catch(error){
@@ -33,7 +36,26 @@ const login = async (req, res) => {
     }
 }
 
+const verifyOtp = async (req, res) => {
+    const { otp, email } = req.body;
+    const user = await loginModel.getUserByEmail(email);
+    const secret = user.secret;
+
+    const valid = speakeasy.totp.verify({
+        secret: secret,
+        encoding: 'base32',
+        token: otp
+    });
+
+    if (valid) {
+        return res.status(200).json({ message: 'Conta verificada com sucesso!' });
+    } else {
+        return res.status(400).json({ message: 'Código de verificação inválido!' });
+    }
+};
+
 module.exports = {
     createLogin,
-    login
+    login,
+    verifyOtp
 }

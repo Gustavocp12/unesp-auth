@@ -4,7 +4,8 @@ const authMiddleware = require('../middlewares/authMiddleware');
 
 const router = express.Router();
 
-router.post('/create', authMiddleware, LoginController.createLogin);
+router.post('/create', LoginController.createLogin);
 router.post('/login', authMiddleware, LoginController.login);
+router.post('/verify-otp', LoginController.verifyOtp);
 
 module.exports = router;
