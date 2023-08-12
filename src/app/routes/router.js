@@ -1,4 +1,4 @@
-import loginRoutes from './loginRoutes';
+const loginRoutes = require('./loginRoutes');
 
 const routes = (app) => {
     app.use(
